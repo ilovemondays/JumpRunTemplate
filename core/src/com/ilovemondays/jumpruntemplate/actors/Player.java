@@ -6,17 +6,20 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
-/**
- * Created by Matthias on 08.04.2017.
- */
 public class Player extends BaseActor {
+    //@TODO: Srite Animation
     private Texture texture = new Texture(Gdx.files.internal("player/megaman.jpg"));
+    private boolean lookUp;
 
     public Player(float x, float y) {
+        super();
         setBounds(getX(),getY(),texture.getWidth(),texture.getHeight());
         setColor(Color.RED);
         setPosition(x, y);
         isJumping = false;
+        lookUp = false;
+        shootTimerMax = 20;
+        shootTimer = shootTimerMax;
     }
 
     @Override
@@ -26,16 +29,19 @@ public class Player extends BaseActor {
 
     public void moveLeft() {
         setX(getX() - speed);
+        direction = -1;
     }
 
     public void moveRight() {
         setX(getX() + speed);
+        direction = 1;
     }
 
     public void jump() {
         if(isAir) return;
 
         isJumping = true;
+        //@TODO: Magic numbers...
         setY(getY() + speed*2);
         actJumpingDistance += speed*2;
 
@@ -52,7 +58,23 @@ public class Player extends BaseActor {
     }
 
     public void shoot(Stage stage) {
-        stage.addActor(new Bullet(getX()+35, getY()+30, 1));
+        if(canShoot()) {
+            shootTimer = 0;
+            //@TODO: delete magic number
+            if(lookUp) {
+                stage.addActor(new Bullet(getX(), getY()+30, 2));
+            } else {
+                stage.addActor(new Bullet(getX(), getY()+30, this.direction));
+            }
+        }
+    }
+
+    public void setLookUp(boolean state) {
+        lookUp = state;
+    }
+
+    public boolean getLookUp() {
+        return lookUp;
     }
 
 }

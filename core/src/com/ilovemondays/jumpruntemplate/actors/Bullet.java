@@ -12,13 +12,13 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public class Bullet extends BaseActor {
     Texture plasmaSheet;
     float stateTime;
-    private static final int FRAME_COLS = 1, FRAME_ROWS = 7;
+    private static final int FRAME_COLS = 2, FRAME_ROWS = 2;
     public Animation plasmaAnimation;
     TextureRegion currentFrame;
-    int direction;
 
     public Bullet(float x, float y, int dir) {
-        plasmaSheet = new Texture(Gdx.files.internal("bullets/plasma.png"));
+        plasmaSheet = new Texture(Gdx.files.internal("bullets/bullet.png"));
+        speed = 10;
 
         // Use the split utility method to create a 2D array of TextureRegions. This is
         // possible because this sprite sheet contains frames of equal size and they are
@@ -60,11 +60,15 @@ public class Bullet extends BaseActor {
     }
 
     public void move() {
-        setX((getX() + speed)*direction);
+        if(direction==2) {
+            setY(getY() + speed);
+        } else {
+            setX(getX() + (direction*speed));
+        }
     }
 
     public void checkBorder() {
-        if(getX()> Gdx.graphics.getWidth() || getX() < 0) {
+        if(getX()> Gdx.graphics.getWidth() || getX() < 0 || getY() > Gdx.graphics.getHeight() || getY() < 0) {
             remove();
         }
     }

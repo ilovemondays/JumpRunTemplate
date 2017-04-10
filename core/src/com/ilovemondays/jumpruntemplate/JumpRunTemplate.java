@@ -40,16 +40,21 @@ public class JumpRunTemplate extends ApplicationAdapter {
 		if(Gdx.input.isKeyPressed(Input.Keys.D)) {
 			player.moveRight();
 		}
+		if(Gdx.input.isKeyPressed(Input.Keys.W)) {
+			player.setLookUp(true);
+		} else {
+			player.setLookUp(false);
+		}
 
 		// jump
-		if(Gdx.input.isKeyPressed(Input.Keys.W)) {
+		if(Gdx.input.isKeyPressed(Input.Keys.K)) {
 			player.jump();
 		} else {
 			player.endJump();
 		}
 
 		// shoot
-		if(Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+		if(Gdx.input.isKeyPressed(Input.Keys.L)) {
 			player.shoot(stage);
 		}
 
