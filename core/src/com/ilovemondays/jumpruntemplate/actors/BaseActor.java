@@ -8,7 +8,7 @@ public class BaseActor  extends Actor{
     int speed = 5;
     boolean isAir = false;
     boolean isJumping = false;
-    int jumpingDistance = 600;
+    int jumpingDistance = 300;
     int actJumpingDistance = 0;
 
     public void update() {
@@ -20,7 +20,7 @@ public class BaseActor  extends Actor{
 
         isAir = true;
         if(getY() >= 0) {
-            setY(getY() - mass);
+            setY(getY() - mass*2);
         }
         if(getY() < 0) {
             setY(0);
