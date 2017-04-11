@@ -5,12 +5,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.Controllers;
-import com.badlogic.gdx.controllers.PovDirection;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.ilovemondays.jumpruntemplate.actors.Player;
 import com.ilovemondays.jumpruntemplate.conf.Defines;
+import com.ilovemondays.jumpruntemplate.utils.TestViewport;
 
 public class JumpRunTemplate extends ApplicationAdapter {
 
@@ -18,12 +20,20 @@ public class JumpRunTemplate extends ApplicationAdapter {
 	private Stage stage;
 	private Controller controller;
 	private Array<Controller> controllers;
+	private OrthographicCamera camera;
+	private TestViewport viewport;
 
 	@Override
 	public void create () {
 		player = new Player(30, 50);
 		stage = new Stage();
 		stage.addActor(player);
+		camera = new OrthographicCamera(720, 450);
+		camera.translate(720/2, 450/2);
+		viewport = new TestViewport();
+		viewport.setScreenSize(720, 450);
+		viewport.setCamera(camera);
+		stage.setViewport(viewport);
 
 		// Controller Setup
 		controller = null;

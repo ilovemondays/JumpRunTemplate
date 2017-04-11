@@ -44,7 +44,6 @@ public class Player extends BaseActor {
         currentSpeed.y += 1.8f;
         actJumpingDistance += currentSpeed.y;
         setY(getY() + currentSpeed.y);
-System.out.println(actJumpingDistance);
         if(actJumpingDistance >= targetSpeed.y) {
             isJumping = false;
             actJumpingDistance = 0;
