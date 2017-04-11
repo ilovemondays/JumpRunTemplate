@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.Controllers;
+import com.badlogic.gdx.controllers.PovDirection;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
@@ -55,33 +56,45 @@ public class JumpRunTemplate extends ApplicationAdapter {
 	private void playerUpdate() {
 
 		// Move left and right
-		if(Gdx.input.isKeyPressed(Input.Keys.A) && !Gdx.input.isKeyPressed(Input.Keys.D)) {
+		if((Gdx.input.isKeyPressed(Input.Keys.A) ||
+				controller.getPov(Defines.Controller.POV) == Defines.Controller.BUTTON_DPAD_LEFT ||
+				controller.getPov(Defines.Controller.POV) == Defines.Controller.BUTTON_DPAD_UP_LEFT) &&
+				!Gdx.input.isKeyPressed(Input.Keys.D)) {
 			player.moveLeft();
 		}
-		if(Gdx.input.isKeyPressed(Input.Keys.D) && !Gdx.input.isKeyPressed(Input.Keys.A)) {
+		if((Gdx.input.isKeyPressed(Input.Keys.D) ||
+				controller.getPov(Defines.Controller.POV) == Defines.Controller.BUTTON_DPAD_RIGHT ||
+				controller.getPov(Defines.Controller.POV) == Defines.Controller.BUTTON_DPAD_UP_RIGHT) &&
+				!Gdx.input.isKeyPressed(Input.Keys.A)) {
 			player.moveRight();
 		}
-		if(Gdx.input.isKeyPressed(Input.Keys.W)) {
+		if(Gdx.input.isKeyPressed(Input.Keys.W) ||
+				controller.getPov(Defines.Controller.POV) == Defines.Controller.BUTTON_DPAD_UP ||
+				controller.getPov(Defines.Controller.POV) == Defines.Controller.BUTTON_DPAD_UP_RIGHT ||
+				controller.getPov(Defines.Controller.POV) == Defines.Controller.BUTTON_DPAD_UP_LEFT) {
 			player.setLookUp(true);
 		} else {
 			player.setLookUp(false);
 		}
 
-		// Not LEFT nor RIGHT
-		if((!Gdx.input.isKeyPressed(Input.Keys.A) && !Gdx.input.isKeyPressed(Input.Keys.D)) ||
-				Gdx.input.isKeyPressed(Input.Keys.A) && Gdx.input.isKeyPressed(Input.Keys.D) ) {
+		// Not LEFT nor RIGHT OR Both at the same time :)
+		if(
+				((!Gdx.input.isKeyPressed(Input.Keys.A) && !Gdx.input.isKeyPressed(Input.Keys.D)) ||
+				Gdx.input.isKeyPressed(Input.Keys.A) && Gdx.input.isKeyPressed(Input.Keys.D)) &&
+				(controller.getPov(Defines.Controller.POV) == Defines.Controller.BUTTON_DPAD_CENTER)
+				) {
 			player.setIdleAnimation();
 		}
 
 		// jump
-		if(Gdx.input.isKeyPressed(Input.Keys.K)) {
+		if(Gdx.input.isKeyPressed(Input.Keys.K) || controller.getButton(Defines.Controller.BUTTON_A)) {
 			player.jump();
 		} else {
 			player.endJump();
 		}
 
 		// shoot
-		if(Gdx.input.isKeyPressed(Input.Keys.L)) {
+		if(Gdx.input.isKeyPressed(Input.Keys.L) || controller.getButton(Defines.Controller.BUTTON_X)) {
 			player.shoot(stage);
 		}
 
