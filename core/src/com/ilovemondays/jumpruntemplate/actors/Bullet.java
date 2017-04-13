@@ -11,7 +11,7 @@ public class Bullet extends BaseActor {
 
 
     public Bullet(float x, float y, Defines.Direction dir) {
-        spriteAnimation = SpriteAnimation.create("bullets/bullet.png", 2, 2, 0.05f);
+        spriteAnimation = SpriteAnimation.create("bullets/neonBullet.png", 1, 4, 0.05f);
         actAnimation = spriteAnimation;
 
         setX(x);

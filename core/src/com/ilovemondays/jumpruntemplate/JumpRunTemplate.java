@@ -7,9 +7,9 @@ import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.ilovemondays.jumpruntemplate.actors.Player;
 import com.ilovemondays.jumpruntemplate.conf.Defines;
 import com.ilovemondays.jumpruntemplate.utils.TestViewport;
@@ -22,6 +22,7 @@ public class JumpRunTemplate extends ApplicationAdapter {
 	private Array<Controller> controllers;
 	private OrthographicCamera camera;
 	private TestViewport viewport;
+	private Texture background;
 
 	@Override
 	public void create () {
@@ -34,6 +35,7 @@ public class JumpRunTemplate extends ApplicationAdapter {
 		viewport.setScreenSize(720, 450);
 		viewport.setCamera(camera);
 		stage.setViewport(viewport);
+		background = new Texture(Gdx.files.internal("backgrounds/1.png"));
 
 		// Controller Setup
 		controller = null;
@@ -55,6 +57,9 @@ public class JumpRunTemplate extends ApplicationAdapter {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		playerUpdate();
+        stage.getBatch().begin();
+        stage.getBatch().draw(background, 0, 0, 720, 450);
+        stage.getBatch().end();
 		stage.draw();
 	}
 
@@ -67,15 +72,15 @@ public class JumpRunTemplate extends ApplicationAdapter {
 
 		// Move left and right
 		if((Gdx.input.isKeyPressed(Input.Keys.A) ||
-				controller.getPov(Defines.Controller.POV) == Defines.Controller.BUTTON_DPAD_LEFT ||
-				controller.getPov(Defines.Controller.POV) == Defines.Controller.BUTTON_DPAD_UP_LEFT) &&
-				!Gdx.input.isKeyPressed(Input.Keys.D)) {
+                controller.getPov(Defines.Controller.POV) == Defines.Controller.BUTTON_DPAD_LEFT ||
+                controller.getPov(Defines.Controller.POV) == Defines.Controller.BUTTON_DPAD_UP_LEFT) &&
+                !Gdx.input.isKeyPressed(Input.Keys.D)) {
 			player.moveLeft();
 		}
 		if((Gdx.input.isKeyPressed(Input.Keys.D) ||
-				controller.getPov(Defines.Controller.POV) == Defines.Controller.BUTTON_DPAD_RIGHT ||
-				controller.getPov(Defines.Controller.POV) == Defines.Controller.BUTTON_DPAD_UP_RIGHT) &&
-				!Gdx.input.isKeyPressed(Input.Keys.A)) {
+                controller.getPov(Defines.Controller.POV) == Defines.Controller.BUTTON_DPAD_RIGHT ||
+                controller.getPov(Defines.Controller.POV) == Defines.Controller.BUTTON_DPAD_UP_RIGHT) &&
+                !Gdx.input.isKeyPressed(Input.Keys.A)) {
 			player.moveRight();
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.W) ||
@@ -89,10 +94,10 @@ public class JumpRunTemplate extends ApplicationAdapter {
 
 		// Not LEFT nor RIGHT OR Both at the same time :)
 		if(
-				((!Gdx.input.isKeyPressed(Input.Keys.A) && !Gdx.input.isKeyPressed(Input.Keys.D)) ||
-				Gdx.input.isKeyPressed(Input.Keys.A) && Gdx.input.isKeyPressed(Input.Keys.D)) &&
-				(controller.getPov(Defines.Controller.POV) == Defines.Controller.BUTTON_DPAD_CENTER)
-				) {
+            ((!Gdx.input.isKeyPressed(Input.Keys.A) && !Gdx.input.isKeyPressed(Input.Keys.D)) ||
+            Gdx.input.isKeyPressed(Input.Keys.A) && Gdx.input.isKeyPressed(Input.Keys.D)) &&
+            (controller.getPov(Defines.Controller.POV) == Defines.Controller.BUTTON_DPAD_CENTER)
+            ) {
 			player.setIdleAnimation();
 		}
 
