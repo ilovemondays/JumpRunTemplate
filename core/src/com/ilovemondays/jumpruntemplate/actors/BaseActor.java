@@ -20,7 +20,7 @@ public class BaseActor  extends Actor{
 
     boolean isAir = false;
     boolean isJumping = false;
-    float actJumpingDistance = 0;
+    protected float actJumpingDistance = 0;
 
     int shootTimerMax = 100;
     int shootTimer;
@@ -93,4 +93,33 @@ public class BaseActor  extends Actor{
     public boolean canShoot() {
         return shootTimer==shootTimerMax;
     }
+
+    public boolean isJumping() {
+        return isJumping;
+    }
+
+    public void setJumping(boolean value) {
+        isJumping = value;
+    }
+
+    public int getShootTimerMax() {
+        return shootTimerMax;
+    }
+
+    public void setShootTimerMax(int val) {
+        shootTimerMax = val;
+    }
+
+    public boolean getIsAir() {
+        return isAir;
+    }
+
+    public void setShootTimer (int shootTimer) {
+        this.shootTimer = shootTimer;
+    }
+
+    public int getShootTimer () {
+        return shootTimer;
+    }
+
 }
