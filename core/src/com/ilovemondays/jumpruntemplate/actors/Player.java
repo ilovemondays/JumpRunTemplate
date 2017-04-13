@@ -8,6 +8,7 @@ import com.ilovemondays.jumpruntemplate.utils.SpriteAnimation;
 public class Player extends BaseActor {
     private boolean lookUp;
     private Animation spriteRunAnimation;
+    private boolean isDashing = false;
 
     public Player(float x, float y) {
         super();
@@ -36,16 +37,43 @@ public class Player extends BaseActor {
         setAccelerationX();
     }
 
+    //@todo: verbessern
+    public void dashRight() {
+        if(!isAir || isDashing) return;
+        System.out.println(222);
+        isDashing = true;
+        direction = Defines.Direction.RIGHT;
+        actAnimation = spriteRunAnimation;
+        currentSpeed.x = 0;
+        currentSpeed.x += 40;
+        setX(getX() + currentSpeed.x);
+        setAccelerationX();
+    }
+
+    //@todo: verbessern
+    public void dashLeft() {
+        if(!isAir || isDashing) return;
+        System.out.println(111);
+        isDashing = true;
+        direction = Defines.Direction.LEFT;
+        actAnimation = spriteRunAnimation;
+        currentSpeed.x = 0;
+        currentSpeed.x -= 40;
+        setX(getX() + currentSpeed.x);
+        setAccelerationX();
+    }
+
     public void jump() {
         if(isAir) return;
 
         actAnimation = spriteAnimation;
         isJumping = true;
-        currentSpeed.y += 1.8f;
+        currentSpeed.y += 1.4f;
         actJumpingDistance += currentSpeed.y;
         setY(getY() + currentSpeed.y);
         if(actJumpingDistance >= targetSpeed.y) {
             isJumping = false;
+            isDashing = false;
             actJumpingDistance = 0;
         }
 
@@ -85,6 +113,10 @@ public class Player extends BaseActor {
             currentSpeed.x -= acceleration;
         }
         setX(getX() + currentSpeed.x);
+    }
+
+    public boolean getIsJumping() {
+        return isJumping;
     }
 
 }

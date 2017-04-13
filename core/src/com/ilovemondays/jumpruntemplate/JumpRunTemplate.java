@@ -1,8 +1,10 @@
 package com.ilovemondays.jumpruntemplate;
 
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.GL20;
@@ -11,8 +13,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.ilovemondays.jumpruntemplate.actors.Player;
-import com.ilovemondays.jumpruntemplate.conf.Defines;
-import com.ilovemondays.jumpruntemplate.utils.TestViewport;
+import com.ilovemondays.jumpruntemplate.actors.boss.Fist;
+import com.ilovemondays.jumpruntemplate.utils.ControllerMap;
+import com.ilovemondays.jumpruntemplate.utils.MyViewport;
 
 public class JumpRunTemplate extends ApplicationAdapter {
 
@@ -21,21 +24,29 @@ public class JumpRunTemplate extends ApplicationAdapter {
 	private Controller controller;
 	private Array<Controller> controllers;
 	private OrthographicCamera camera;
-	private TestViewport viewport;
+	private MyViewport viewport;
 	private Texture background;
+    private ControllerMap input;
+    private Fist fist;
+	private Music music;
 
 	@Override
 	public void create () {
 		player = new Player(30, 50);
 		stage = new Stage();
+        fist = new Fist(player);
 		stage.addActor(player);
+		stage.addActor(fist);
 		camera = new OrthographicCamera(720, 450);
 		camera.translate(720/2, 450/2);
-		viewport = new TestViewport();
+		viewport = new MyViewport();
 		viewport.setScreenSize(720, 450);
 		viewport.setCamera(camera);
 		stage.setViewport(viewport);
-		background = new Texture(Gdx.files.internal("backgrounds/1.png"));
+
+		background = new Texture(Gdx.files.internal("backgrounds/ilovemondays2.gif"));
+		Music music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
+		music.play();
 
 		// Controller Setup
 		controller = null;
@@ -43,13 +54,13 @@ public class JumpRunTemplate extends ApplicationAdapter {
 		if(controllers.size == 0) {
 			//Keine Controller vorhanden...
 		} else {
-			Controller pad = null;
 			for(Controller con : controllers) {
 				if(con.getName().contains("Xbox")) {
 					controller = con;
 				}
 			}
 		}
+        input = new ControllerMap(controller);
 	}
 
 	@Override
@@ -71,45 +82,40 @@ public class JumpRunTemplate extends ApplicationAdapter {
 	private void playerUpdate() {
 
 		// Move left and right
-		if((Gdx.input.isKeyPressed(Input.Keys.A) ||
-                controller.getPov(Defines.Controller.POV) == Defines.Controller.BUTTON_DPAD_LEFT ||
-                controller.getPov(Defines.Controller.POV) == Defines.Controller.BUTTON_DPAD_UP_LEFT) &&
-                !Gdx.input.isKeyPressed(Input.Keys.D)) {
+		if(input.isLeft()) {
 			player.moveLeft();
 		}
-		if((Gdx.input.isKeyPressed(Input.Keys.D) ||
-                controller.getPov(Defines.Controller.POV) == Defines.Controller.BUTTON_DPAD_RIGHT ||
-                controller.getPov(Defines.Controller.POV) == Defines.Controller.BUTTON_DPAD_UP_RIGHT) &&
-                !Gdx.input.isKeyPressed(Input.Keys.A)) {
+		if(input.isRight()) {
 			player.moveRight();
 		}
-		if(Gdx.input.isKeyPressed(Input.Keys.W) ||
-				controller.getPov(Defines.Controller.POV) == Defines.Controller.BUTTON_DPAD_UP ||
-				controller.getPov(Defines.Controller.POV) == Defines.Controller.BUTTON_DPAD_UP_RIGHT ||
-				controller.getPov(Defines.Controller.POV) == Defines.Controller.BUTTON_DPAD_UP_LEFT) {
+		if(input.isUp()) {
 			player.setLookUp(true);
 		} else {
 			player.setLookUp(false);
 		}
 
 		// Not LEFT nor RIGHT OR Both at the same time :)
-		if(
-            ((!Gdx.input.isKeyPressed(Input.Keys.A) && !Gdx.input.isKeyPressed(Input.Keys.D)) ||
-            Gdx.input.isKeyPressed(Input.Keys.A) && Gdx.input.isKeyPressed(Input.Keys.D)) &&
-            (controller.getPov(Defines.Controller.POV) == Defines.Controller.BUTTON_DPAD_CENTER)
-            ) {
+		if(!input.isLeft() && !input.isRight()) {
 			player.setIdleAnimation();
 		}
 
 		// jump
-		if(Gdx.input.isKeyPressed(Input.Keys.K) || controller.getButton(Defines.Controller.BUTTON_A)) {
+		if(input.isJump()) {
 			player.jump();
 		} else {
 			player.endJump();
 		}
 
+		// dash
+		if(input.isJump() && input.isRight()) {
+			player.dashRight();
+		}
+		if(input.isJump() && input.isLeft()) {
+			player.dashLeft();
+		}
+
 		// shoot
-		if(Gdx.input.isKeyPressed(Input.Keys.L) || controller.getButton(Defines.Controller.BUTTON_X)) {
+		if(input.isShoot()) {
 			player.shoot(stage);
 		}
 
