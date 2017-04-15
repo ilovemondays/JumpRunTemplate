@@ -44,7 +44,7 @@ public class JumpRunTemplate extends ApplicationAdapter {
 		viewport.setCamera(camera);
 		stage.setViewport(viewport);
 
-		background = new Texture(Gdx.files.internal("backgrounds/ilovemondays2.gif"));
+		background = new Texture(Gdx.files.internal("backgrounds/3.png"));
 		Music music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
 		music.play();
 
