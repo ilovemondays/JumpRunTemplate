@@ -17,6 +17,7 @@ public class BaseActor  extends Actor{
     protected Vector2 targetSpeed = new Vector2(6.0f, 20.0f);
     protected Vector2 currentSpeed = new Vector2(0, 0);
     protected Defines.Direction direction = Defines.Direction.RIGHT;
+    protected boolean flip;
 
     boolean isAir = false;
     boolean isJumping = false;
@@ -40,7 +41,9 @@ public class BaseActor  extends Actor{
     public void draw(Batch batch, float alpha){
         stateTime += Gdx.graphics.getDeltaTime();
         currentFrame = actAnimation.getKeyFrame(stateTime, true);
-        batch.draw(currentFrame,this.getX(),getY());
+        flip = (direction == Defines.Direction.LEFT);
+        batch.draw(currentFrame, flip ? getX()+getWidth() : getX(), getY(), flip ? -1*getWidth() : getWidth(), getHeight());
+
         update();
     }
 

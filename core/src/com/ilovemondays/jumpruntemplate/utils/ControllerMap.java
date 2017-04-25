@@ -67,6 +67,15 @@ public class ControllerMap {
         return false;
     }
 
+    public boolean isDash() {
+        if(controller!=null) {
+            if(Gdx.input.isKeyPressed(Input.Keys.J) || controller.getButton(Defines.Controller.BUTTON_B)) return true;
+        } else {
+            if(Gdx.input.isKeyPressed(Input.Keys.J)) return true;
+        }
+        return false;
+    }
+
     public boolean isShoot() {
         if(controller!=null) {
             if(Gdx.input.isKeyPressed(Input.Keys.L) || controller.getButton(Defines.Controller.BUTTON_X)) return true;

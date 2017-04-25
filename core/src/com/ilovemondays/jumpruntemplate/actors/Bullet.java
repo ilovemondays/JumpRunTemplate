@@ -16,6 +16,7 @@ public class Bullet extends BaseActor {
 
         setX(x);
         setY(y);
+        setSize(12,12);
         direction = dir;
         acceleration = 10;
     }
@@ -39,4 +40,6 @@ public class Bullet extends BaseActor {
             remove();
         }
     }
+
+
 }

@@ -33,5 +33,7 @@ public class BaseBoss extends Actor {
     }
 
     public void update() {
+        System.out.println();
     }
+
 }

@@ -107,11 +107,14 @@ public class JumpRunTemplate extends ApplicationAdapter {
 		}
 
 		// dash
-		if(input.isJump() && input.isRight()) {
+		if(input.isDash() && input.isRight()) {
 			player.dashRight();
 		}
-		if(input.isJump() && input.isLeft()) {
+		if(input.isDash() && input.isLeft()) {
 			player.dashLeft();
+		}
+		if(!input.isDash() || (!input.isLeft() && !input.isRight())) {
+			player.setIsDashing(false);
 		}
 
 		// shoot

@@ -8,12 +8,19 @@ import com.ilovemondays.jumpruntemplate.utils.SpriteAnimation;
 public class Player extends BaseActor {
     private boolean lookUp;
     private Animation spriteRunAnimation;
+    private Animation spriteDashAnimation;
     private boolean isDashing = false;
+    private int actDashingDistance = 0;
+    private int maxDshingDistance = 100;
 
     public Player(float x, float y) {
         super();
         spriteAnimation = SpriteAnimation.create("player/idle.png", 1, 2, 0.5f);
         spriteRunAnimation = SpriteAnimation.create("player/run.png", 1, 10, 0.1f);
+        spriteDashAnimation = SpriteAnimation.create("player/dash.png", 1, 2, 0.1f);
+
+        setWidth(64);
+        setHeight(64);
 
         actAnimation = spriteAnimation;
         setPosition(x, y);
@@ -39,26 +46,34 @@ public class Player extends BaseActor {
 
     //@todo: verbessern
     public void dashRight() {
-        if(!isAir || isDashing) return;
-        System.out.println(222);
+        if(!isAir || (actDashingDistance >= maxDshingDistance)) {
+            isDashing = false;
+            return;
+        }
         isDashing = true;
         direction = Defines.Direction.RIGHT;
-        actAnimation = spriteRunAnimation;
+        actAnimation = spriteDashAnimation;
         currentSpeed.x = 0;
-        currentSpeed.x += 40;
+        currentSpeed.y = 0;
+        currentSpeed.x += 3;
+        actDashingDistance += 3;
         setX(getX() + currentSpeed.x);
         setAccelerationX();
     }
 
     //@todo: verbessern
     public void dashLeft() {
-        if(!isAir || isDashing) return;
-        System.out.println(111);
+        if(!isAir || (actDashingDistance >= maxDshingDistance)) {
+            isDashing = false;
+            return;
+        }
         isDashing = true;
         direction = Defines.Direction.LEFT;
-        actAnimation = spriteRunAnimation;
+        actAnimation = spriteDashAnimation;
         currentSpeed.x = 0;
-        currentSpeed.x -= 40;
+        currentSpeed.y = 0;
+        currentSpeed.x -= 3;
+        actDashingDistance += 3;
         setX(getX() + currentSpeed.x);
         setAccelerationX();
     }
@@ -74,9 +89,27 @@ public class Player extends BaseActor {
         if(actJumpingDistance >= targetSpeed.y) {
             isJumping = false;
             isDashing = false;
+            actDashingDistance = 0;
             actJumpingDistance = 0;
         }
 
+    }
+
+    @Override
+    public void checkAir() {
+        if(isJumping || isDashing) return;
+
+        currentSpeed.y -= Defines.GRAVITY;
+
+        isAir = true;
+        if(getY() >= 0) {
+            setY(getY() + currentSpeed.y);
+        }
+        if(getY() < 0) {
+            setY(0);
+            currentSpeed.y = 0;
+            isAir = false;
+        }
     }
 
     public void endJump() {
@@ -117,6 +150,10 @@ public class Player extends BaseActor {
 
     public boolean getIsJumping() {
         return isJumping;
+    }
+
+    public void setIsDashing(boolean value) {
+        isDashing = value;
     }
 
 }
