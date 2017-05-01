@@ -10,7 +10,7 @@ import com.ilovemondays.jumpruntemplate.utils.SpriteAnimation;
 public class Fist extends BaseBoss {
     float animationSpeed = 1;
     int timer;
-    int defaultDelayTime = 10;
+    int defaultDelayTime = 500;
     boolean isMovingBack = false;
     boolean isAttacking = false;
     Actor player;
@@ -18,18 +18,21 @@ public class Fist extends BaseBoss {
     public Fist(Actor player) {
         super();
         name = "CYBER FIST";
-        hitpoints = 10;
+        hitpoints = 50;
         timer = defaultDelayTime;
         this.player = player;
 
         spriteAnimation = SpriteAnimation.create("boss/fist.png", 1, 3, animationSpeed);
         actAnimation = spriteAnimation;
+        setSize(120, 64);
         setPosition(500, 0);
+        setBounds();
     }
 
     @Override
     public void update() {
         movement();
+        updateBounds();
     }
 
     private void movement() {

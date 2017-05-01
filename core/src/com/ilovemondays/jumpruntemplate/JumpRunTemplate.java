@@ -1,9 +1,7 @@
 package com.ilovemondays.jumpruntemplate;
 
 import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.Controllers;
@@ -46,7 +44,7 @@ public class JumpRunTemplate extends ApplicationAdapter {
 
 		background = new Texture(Gdx.files.internal("backgrounds/3.png"));
 		Music music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
-		music.play();
+		// music.play();
 
 		// Controller Setup
 		controller = null;
@@ -79,6 +77,9 @@ public class JumpRunTemplate extends ApplicationAdapter {
 		stage.dispose();
 	}
 
+	/**
+	 * @todo: auslagern in einen player controller
+	 */
 	private void playerUpdate() {
 
 		// Move left and right

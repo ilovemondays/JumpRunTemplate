@@ -4,14 +4,16 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.ilovemondays.jumpruntemplate.conf.Defines;
 import com.ilovemondays.jumpruntemplate.utils.SpriteAnimation;
 
-public class BaseActor  extends Actor{
+public class BaseActor  extends GameObject{
     //@TODO: Sinnvolle Konstanten einbauen
     int hitpoints = 10;
+
+    protected Defines.Actors actorType;
 
     protected float acceleration = 0.5f;
     protected Vector2 targetSpeed = new Vector2(6.0f, 20.0f);
@@ -35,6 +37,7 @@ public class BaseActor  extends Actor{
         spriteAnimation = SpriteAnimation.create("default.jpg", 1, 1, 1);
         actAnimation = spriteAnimation;
         shootTimer = shootTimerMax;
+        bounds = new Rectangle(getX(), getY(), getWidth(), getHeight());
     }
 
     @Override
@@ -43,7 +46,6 @@ public class BaseActor  extends Actor{
         currentFrame = actAnimation.getKeyFrame(stateTime, true);
         flip = (direction == Defines.Direction.LEFT);
         batch.draw(currentFrame, flip ? getX()+getWidth() : getX(), getY(), flip ? -1*getWidth() : getWidth(), getHeight());
-
         update();
     }
 
@@ -51,6 +53,7 @@ public class BaseActor  extends Actor{
         checkAir();
         updateShootTimer();
         checkSpeed();
+        updateBounds();
     }
 
     public void checkAir() {
@@ -123,6 +126,10 @@ public class BaseActor  extends Actor{
 
     public int getShootTimer () {
         return shootTimer;
+    }
+
+    public Defines.Actors getActorType() {
+        return actorType;
     }
 
 }

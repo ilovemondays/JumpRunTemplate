@@ -1,6 +1,7 @@
 package com.ilovemondays.jumpruntemplate.actors;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.ilovemondays.jumpruntemplate.conf.Defines;
 import com.ilovemondays.jumpruntemplate.utils.SpriteAnimation;
@@ -15,12 +16,13 @@ public class Player extends BaseActor {
 
     public Player(float x, float y) {
         super();
+        actorType = Defines.Actors.PLAYER;
+
         spriteAnimation = SpriteAnimation.create("player/idle.png", 1, 2, 0.5f);
         spriteRunAnimation = SpriteAnimation.create("player/run.png", 1, 10, 0.1f);
         spriteDashAnimation = SpriteAnimation.create("player/dash.png", 1, 2, 0.1f);
 
-        setWidth(64);
-        setHeight(64);
+        setSize(64, 64);
 
         actAnimation = spriteAnimation;
         setPosition(x, y);
@@ -28,6 +30,8 @@ public class Player extends BaseActor {
         lookUp = false;
         shootTimerMax = 10;
         shootTimer = shootTimerMax;
+
+        bounds = new Rectangle(getX(), getY(), getWidth(), getHeight());
     }
 
     public void moveLeft() {
