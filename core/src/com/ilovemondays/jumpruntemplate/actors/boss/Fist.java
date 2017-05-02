@@ -1,5 +1,8 @@
 package com.ilovemondays.jumpruntemplate.actors.boss;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.ilovemondays.jumpruntemplate.actors.BaseBoss;
 import com.ilovemondays.jumpruntemplate.utils.SpriteAnimation;
