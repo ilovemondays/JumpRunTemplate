@@ -7,11 +7,22 @@ varying vec2 v_texCoords;
 uniform sampler2D u_texture;
 uniform mat4 u_projTrans;
 
-void main() {
-        vec3 color = texture2D(u_texture, v_texCoords).rgb;
-        float gray = (color.r + color.g + color.b) / 3.0;
-        vec3 grayscale = vec3(gray);
+uniform vec2 radial_size;    // texel size
+uniform float radial_blur;   // blur factor
+uniform float radial_bright; // bright factor
+uniform vec2 radial_origin;  // blur origin
 
-        gl_FragColor = vec4(grayscale, 0.5);
-       // gl_FragColor = vec4(color.rgb/color.a, color.a);
+void main() {
+    vec2 TexCoord = vec2(gl_TexCoord[0]);
+
+    vec4 SumColor = vec4(0.0, 0.0, 0.0, 0.0);
+    TexCoord += radial_size * 0.5 - radial_origin;
+
+    for (int i = 0; i < 12; i++)
+    {
+    float scale = 1.0 - radial_blur * (float(i) / 11.0);
+    SumColor += texture2D(Texture, TexCoord * scale + radial_origin);
+    }
+
+    gl_FragColor = SumColor / 12.0 * radial_bright;
 }

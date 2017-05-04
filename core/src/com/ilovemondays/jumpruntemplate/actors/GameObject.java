@@ -20,6 +20,6 @@ public class GameObject extends Actor {
     }
 
     public void updateBounds() {
-        bounds.setPosition(getX(), getY());
+        bounds.setPosition(getX()+12, getY()+12);
     }
 }

@@ -2,6 +2,7 @@ package com.ilovemondays.jumpruntemplate.actors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -45,11 +46,7 @@ public class BaseBoss extends GameObject {
     public void draw(Batch batch, float alpha){
         stateTime += Gdx.graphics.getDeltaTime();
         currentFrame = actAnimation.getKeyFrame(stateTime, true);
-
-        batch.setShader(shader);
         batch.draw(currentFrame,this.getX(),getY());
-        batch.setShader(null);
-
         update();
     }
 

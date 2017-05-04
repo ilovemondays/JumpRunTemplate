@@ -1,6 +1,10 @@
 package com.ilovemondays.jumpruntemplate.actors;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Rectangle;
 import com.ilovemondays.jumpruntemplate.conf.Defines;
 import com.ilovemondays.jumpruntemplate.utils.CollisionManager;
@@ -11,6 +15,9 @@ import com.ilovemondays.jumpruntemplate.utils.SpriteAnimation;
  */
 public class Bullet extends BaseActor {
     int power;
+    // SHADER TEST
+    private ShaderProgram shader;
+    private FileHandle fragmentShader, vertexShader;
 
     public Bullet(float x, float y, Defines.Direction dir) {
         actorType = Defines.Actors.BULLET;
@@ -20,14 +27,35 @@ public class Bullet extends BaseActor {
 
         setX(x);
         setY(y);
-        setSize(12,12);
+        setSize(24,24);
         direction = dir;
-        acceleration = 10;
+        acceleration = 1;
         power = 1;
 
         // for collision detection
-        bounds = new Rectangle(getX(), getY(), getWidth(), getHeight());
+        bounds = new Rectangle(getX()+12, getY()+12, 12, 12);
         collision = CollisionManager.getInstance();
+
+        // SHADER TEST
+        vertexShader = Gdx.files.internal("shader/vertex.glsl");
+        fragmentShader = Gdx.files.internal("shader/gaussian-blur.glsl");
+        shader = new ShaderProgram(vertexShader, fragmentShader);
+    }
+
+    @Override
+    public void draw(Batch batch, float alpha){
+        stateTime += Gdx.graphics.getDeltaTime();
+        currentFrame = actAnimation.getKeyFrame(stateTime, true);
+        //batch.enableBlending();
+        //batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
+        batch.draw(currentFrame,this.getX(),getY());
+        //batch.setShader(shader);
+        //batch.draw(currentFrame,this.getX(),getY());
+        //batch.setShader(null);
+
+        // batch.draw(currentFrame,this.getX(),getY());
+
+        update();
     }
 
     @Override
