@@ -29,7 +29,7 @@ public class Bullet extends BaseActor {
         setY(y);
         setSize(24,24);
         direction = dir;
-        acceleration = 1;
+        acceleration = 5;
         power = 1;
 
         // for collision detection
@@ -38,7 +38,7 @@ public class Bullet extends BaseActor {
 
         // SHADER TEST
         vertexShader = Gdx.files.internal("shader/vertex.glsl");
-        fragmentShader = Gdx.files.internal("shader/gaussian-blur.glsl");
+        fragmentShader = Gdx.files.internal("shader/blur-h.glsl");
         shader = new ShaderProgram(vertexShader, fragmentShader);
     }
 

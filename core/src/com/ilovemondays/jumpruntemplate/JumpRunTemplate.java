@@ -8,7 +8,10 @@ import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
@@ -30,6 +33,12 @@ public class JumpRunTemplate extends ApplicationAdapter {
     private Fist fist;
 	private Music music;
 
+	private FrameBuffer frameBufferBrightColors, frameBufferBlur;
+	private TextureRegion bufferTextureBrightColors, bufferTextureBlur;
+	// SHADER TEST
+	private ShaderProgram shader, blurHShader, blurVShader;
+	private FileHandle fragmentShader, vertexShader, blurHFragmentShader, blurVFragmentShader;
+
 	@Override
 	public void create () {
 		player = new Player(30, 50);
@@ -43,6 +52,21 @@ public class JumpRunTemplate extends ApplicationAdapter {
 		viewport.setScreenSize(720, 450);
 		viewport.setCamera(camera);
 		stage.setViewport(viewport);
+
+		frameBufferBrightColors = new FrameBuffer(Pixmap.Format.RGBA8888, 720, 450, false);
+		frameBufferBlur = new FrameBuffer(Pixmap.Format.RGBA8888, 720, 450, false);
+		bufferTextureBrightColors = new TextureRegion(frameBufferBrightColors.getColorBufferTexture());
+		bufferTextureBlur = new TextureRegion(frameBufferBlur.getColorBufferTexture());
+		bufferTextureBrightColors.flip(false, true);
+
+		// shader
+		vertexShader = Gdx.files.internal("shader/vertex.glsl");
+		fragmentShader = Gdx.files.internal("shader/getBrightColors.glsl");
+		blurHFragmentShader = Gdx.files.internal("shader/blur-h.glsl");
+		blurVFragmentShader = Gdx.files.internal("shader/blur-v.glsl");
+		shader = new ShaderProgram(vertexShader, fragmentShader);
+		blurHShader = new ShaderProgram(vertexShader, blurHFragmentShader);
+		blurVShader = new ShaderProgram(vertexShader, blurVFragmentShader);
 
 		background = new Texture(Gdx.files.internal("backgrounds/3.png"));
 		Music music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
@@ -63,15 +87,42 @@ public class JumpRunTemplate extends ApplicationAdapter {
         input = new ControllerMap(controller);
 	}
 
+	private void renderFrameBuffer(FrameBuffer fb, ShaderProgram sh, Texture tex) {
+		fb.begin();
+		stage.getBatch().begin();
+		Gdx.gl.glClearColor(0, 0, 0, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		stage.getBatch().setShader(sh);
+		stage.getBatch().draw(tex, 0, 0, 720, 450);
+		stage.getBatch().end();
+		stage.getBatch().setShader(null);
+		fb.end();
+		stage.getCamera().update();
+	}
+
 	@Override
 	public void render () {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		playerUpdate();
+
         stage.getBatch().begin();
         stage.getBatch().draw(background, 0, 0, 720, 450);
-        stage.getBatch().end();
+		stage.getBatch().end();
+
+		renderFrameBuffer(frameBufferBrightColors, shader, background);
+		renderFrameBuffer(frameBufferBlur, blurHShader, bufferTextureBrightColors.getTexture());
+
+		stage.getBatch().begin();
+		stage.getBatch().enableBlending();
+		stage.getBatch().setBlendFunction(GL20.GL_ONE, GL20.GL_ONE);
+		stage.getBatch().setShader(blurVShader);
+		stage.getBatch().draw(bufferTextureBlur, 0, 0, 720, 450);
+		stage.getBatch().setShader(null);
+		stage.getBatch().end();
+
 		stage.draw();
+
 	}
 
 	@Override
