@@ -38,6 +38,8 @@ public class JumpRunTemplate extends ApplicationAdapter {
 	// SHADER TEST
 	private ShaderProgram shader, blurHShader, blurVShader;
 	private FileHandle fragmentShader, vertexShader, blurHFragmentShader, blurVFragmentShader;
+	private float u_bloomLevel;
+	private boolean pulseDown;
 
 	@Override
 	public void create () {
@@ -52,6 +54,8 @@ public class JumpRunTemplate extends ApplicationAdapter {
 		viewport.setScreenSize(720, 450);
 		viewport.setCamera(camera);
 		stage.setViewport(viewport);
+		u_bloomLevel = 0.6f;
+		pulseDown = true;
 
 		frameBufferBrightColors = new FrameBuffer(Pixmap.Format.RGBA8888, 720, 450, false);
 		frameBufferBlur = new FrameBuffer(Pixmap.Format.RGBA8888, 720, 450, false);
@@ -68,7 +72,7 @@ public class JumpRunTemplate extends ApplicationAdapter {
 		blurHShader = new ShaderProgram(vertexShader, blurHFragmentShader);
 		blurVShader = new ShaderProgram(vertexShader, blurVFragmentShader);
 
-		background = new Texture(Gdx.files.internal("backgrounds/3.png"));
+		background = new Texture(Gdx.files.internal("backgrounds/ilovemondays2.gif"));
 		Music music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
 		// music.play();
 
@@ -100,16 +104,36 @@ public class JumpRunTemplate extends ApplicationAdapter {
 		stage.getCamera().update();
 	}
 
+	private void pulseBloom(float min, float max) {
+		if(pulseDown) {
+			u_bloomLevel-=0.007f;
+		}
+		if(!pulseDown) {
+			u_bloomLevel+=0.007f;
+		}
+		if(u_bloomLevel >= max) {
+			pulseDown = true;
+		}
+		if(u_bloomLevel <= min) {
+			pulseDown = false;
+		}
+	}
+
 	@Override
 	public void render () {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
 		playerUpdate();
+		pulseBloom(0.57f, 0.8f);
 
         stage.getBatch().begin();
         stage.getBatch().draw(background, 0, 0, 720, 450);
 		stage.getBatch().end();
 
+		shader.begin();
+		shader.setUniformf("u_bloomLevel", u_bloomLevel);
+		shader.end();
 		renderFrameBuffer(frameBufferBrightColors, shader, background);
 		renderFrameBuffer(frameBufferBlur, blurHShader, bufferTextureBrightColors.getTexture());
 
@@ -119,6 +143,7 @@ public class JumpRunTemplate extends ApplicationAdapter {
 		stage.getBatch().setShader(blurVShader);
 		stage.getBatch().draw(bufferTextureBlur, 0, 0, 720, 450);
 		stage.getBatch().setShader(null);
+		stage.getBatch().setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 		stage.getBatch().end();
 
 		stage.draw();

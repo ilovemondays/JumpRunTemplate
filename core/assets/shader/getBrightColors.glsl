@@ -6,10 +6,11 @@ varying vec4 v_color;
 varying vec2 v_texCoords;
 uniform sampler2D u_texture;
 uniform mat4 u_projTrans;
+uniform float u_bloomLevel;
 
 void main() {
         vec3 o_color = texture2D(u_texture, v_texCoords).rgb;
-        if((o_color.r + o_color.b + o_color.g)/3 < 0.3) {
+        if((o_color.r + o_color.b + o_color.g)/3 < u_bloomLevel) {
             o_color = vec3(0.0, 0.0, 0.0);
         } else {
             o_color.r += 0.5;
