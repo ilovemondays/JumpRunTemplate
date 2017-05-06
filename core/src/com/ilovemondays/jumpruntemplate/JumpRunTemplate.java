@@ -13,17 +13,20 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
+import com.ilovemondays.jumpruntemplate.actors.BaseActor;
+import com.ilovemondays.jumpruntemplate.actors.BaseBoss;
 import com.ilovemondays.jumpruntemplate.actors.Player;
 import com.ilovemondays.jumpruntemplate.actors.boss.Fist;
+import com.ilovemondays.jumpruntemplate.utils.ActorManager;
+import com.ilovemondays.jumpruntemplate.utils.BloomStage;
 import com.ilovemondays.jumpruntemplate.utils.ControllerMap;
 import com.ilovemondays.jumpruntemplate.utils.MyViewport;
 
 public class JumpRunTemplate extends ApplicationAdapter {
 
 	private Player player;
-	private Stage stage;
+	private BloomStage stage;
 	private Controller controller;
 	private Array<Controller> controllers;
 	private OrthographicCamera camera;
@@ -32,6 +35,7 @@ public class JumpRunTemplate extends ApplicationAdapter {
     private ControllerMap input;
     private Fist fist;
 	private Music music;
+	private ActorManager actorManager;
 
 	private FrameBuffer frameBufferBrightColors, frameBufferBlur;
 	private TextureRegion bufferTextureBrightColors, bufferTextureBlur;
@@ -44,7 +48,7 @@ public class JumpRunTemplate extends ApplicationAdapter {
 	@Override
 	public void create () {
 		player = new Player(30, 50);
-		stage = new Stage();
+		stage = new BloomStage();
         fist = new Fist(player);
 		stage.addActor(player);
 		stage.addActor(fist);
@@ -54,8 +58,9 @@ public class JumpRunTemplate extends ApplicationAdapter {
 		viewport.setScreenSize(720, 450);
 		viewport.setCamera(camera);
 		stage.setViewport(viewport);
-		u_bloomLevel = 0.6f;
+		u_bloomLevel = 0.3f;
 		pulseDown = true;
+		actorManager = ActorManager.getInstance();
 
 		frameBufferBrightColors = new FrameBuffer(Pixmap.Format.RGBA8888, 720, 450, false);
 		frameBufferBlur = new FrameBuffer(Pixmap.Format.RGBA8888, 720, 450, false);
@@ -72,7 +77,7 @@ public class JumpRunTemplate extends ApplicationAdapter {
 		blurHShader = new ShaderProgram(vertexShader, blurHFragmentShader);
 		blurVShader = new ShaderProgram(vertexShader, blurVFragmentShader);
 
-		background = new Texture(Gdx.files.internal("backgrounds/ilovemondays2.gif"));
+		background = new Texture(Gdx.files.internal("backgrounds/3.png"));
 		Music music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
 		// music.play();
 
@@ -106,10 +111,10 @@ public class JumpRunTemplate extends ApplicationAdapter {
 
 	private void pulseBloom(float min, float max) {
 		if(pulseDown) {
-			u_bloomLevel-=0.007f;
+			u_bloomLevel-=0.005f;
 		}
 		if(!pulseDown) {
-			u_bloomLevel+=0.007f;
+			u_bloomLevel+=0.005f;
 		}
 		if(u_bloomLevel >= max) {
 			pulseDown = true;
@@ -124,8 +129,7 @@ public class JumpRunTemplate extends ApplicationAdapter {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		playerUpdate();
-		pulseBloom(0.57f, 0.8f);
+		//pulseBloom(0.2f, 0.6f);
 
         stage.getBatch().begin();
         stage.getBatch().draw(background, 0, 0, 720, 450);
@@ -148,6 +152,15 @@ public class JumpRunTemplate extends ApplicationAdapter {
 
 		stage.draw();
 
+		// Update All Actors
+		for (BaseActor bullet: actorManager.getBullets()) {
+			bullet.update();
+		}
+		for (BaseBoss boss: actorManager.getBosses()) {
+			boss.update();
+		}
+		playerUpdate();
+		actorManager.cleanUp();
 	}
 
 	@Override

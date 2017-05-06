@@ -6,7 +6,7 @@ import com.badlogic.gdx.controllers.PovDirection;
  * Created by Matthias on 11.04.2017.
  */
 public class Defines {
-    public final static float GRAVITY = 0.2f;
+    public final static float GRAVITY = 0.3f;
 
     public enum Actors {
         PLAYER, BOSS, BULLET

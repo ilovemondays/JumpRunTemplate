@@ -36,20 +36,21 @@ public class BaseActor  extends GameObject{
     public BaseActor() {
         spriteAnimation = SpriteAnimation.create("default.jpg", 1, 1, 1);
         actAnimation = spriteAnimation;
+        currentFrame = actAnimation.getKeyFrame(stateTime, true);
+
         shootTimer = shootTimerMax;
         bounds = new Rectangle(getX(), getY(), getWidth(), getHeight());
     }
 
-    @Override
     public void draw(Batch batch, float alpha){
-        stateTime += Gdx.graphics.getDeltaTime();
-        currentFrame = actAnimation.getKeyFrame(stateTime, true);
         flip = (direction == Defines.Direction.LEFT);
         batch.draw(currentFrame, flip ? getX()+getWidth() : getX(), getY(), flip ? -1*getWidth() : getWidth(), getHeight());
-        update();
     }
 
     public void update() {
+        stateTime += Gdx.graphics.getDeltaTime();
+        currentFrame = actAnimation.getKeyFrame(stateTime, true);
+
         checkAir();
         updateShootTimer();
         checkSpeed();

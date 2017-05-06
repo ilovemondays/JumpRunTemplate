@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.ilovemondays.jumpruntemplate.conf.Defines;
+import com.ilovemondays.jumpruntemplate.utils.ActorManager;
 import com.ilovemondays.jumpruntemplate.utils.SpriteAnimation;
 
 public class Player extends BaseActor {
@@ -12,11 +13,12 @@ public class Player extends BaseActor {
     private Animation spriteDashAnimation;
     private boolean isDashing = false;
     private int actDashingDistance = 0;
-    private int maxDshingDistance = 100;
+    private int maxDashingDistance = 100;
 
     public Player(float x, float y) {
         super();
         actorType = Defines.Actors.PLAYER;
+        actorManager = ActorManager.getInstance();
 
         spriteAnimation = SpriteAnimation.create("player/idle.png", 1, 2, 0.5f);
         spriteRunAnimation = SpriteAnimation.create("player/run.png", 1, 10, 0.1f);
@@ -50,7 +52,7 @@ public class Player extends BaseActor {
 
     //@todo: verbessern
     public void dashRight() {
-        if(!isAir || (actDashingDistance >= maxDshingDistance)) {
+        if(!isAir || (actDashingDistance >= maxDashingDistance)) {
             isDashing = false;
             return;
         }
@@ -67,7 +69,7 @@ public class Player extends BaseActor {
 
     //@todo: verbessern
     public void dashLeft() {
-        if(!isAir || (actDashingDistance >= maxDshingDistance)) {
+        if(!isAir || (actDashingDistance >= maxDashingDistance)) {
             isDashing = false;
             return;
         }
@@ -122,14 +124,17 @@ public class Player extends BaseActor {
     }
 
     public void shoot(Stage stage) {
+        BaseActor bullet;
         if(canShoot()) {
             shootTimer = 0;
             //@TODO: delete magic number
             if(lookUp) {
-                stage.addActor(new Bullet(getX(), getY()+30, Defines.Direction.UP));
+                bullet = new Bullet(getX(), getY()+30, Defines.Direction.UP);
             } else {
-                stage.addActor(new Bullet(getX(), getY()+30, direction));
+                bullet = new Bullet(getX(), getY()+30, direction);
             }
+            stage.addActor(bullet);
+            actorManager.addBullet(bullet);
         }
     }
 

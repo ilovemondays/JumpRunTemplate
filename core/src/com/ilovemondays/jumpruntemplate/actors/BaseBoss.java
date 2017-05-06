@@ -2,13 +2,12 @@ package com.ilovemondays.jumpruntemplate.actors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.ilovemondays.jumpruntemplate.conf.Defines;
-import com.ilovemondays.jumpruntemplate.utils.CollisionManager;
+import com.ilovemondays.jumpruntemplate.utils.ActorManager;
 import com.ilovemondays.jumpruntemplate.utils.SpriteAnimation;
 
 /**
@@ -19,10 +18,10 @@ public class BaseBoss extends GameObject {
     protected String name;
     protected Defines.Actors actorType;
 
-    float stateTime = 0f;
+    protected float stateTime = 0f;
     protected Animation spriteAnimation;
     protected Animation actAnimation;
-    TextureRegion currentFrame;
+    protected TextureRegion currentFrame;
 
     // SHADER TEST
     private ShaderProgram shader;
@@ -32,9 +31,10 @@ public class BaseBoss extends GameObject {
         actorType = Defines.Actors.BOSS;
         spriteAnimation = SpriteAnimation.create("default.jpg", 1, 1, 1);
         actAnimation = spriteAnimation;
+        currentFrame = actAnimation.getKeyFrame(stateTime, true);
 
-        collision = CollisionManager.getInstance();
-        collision.addEnemy(this);
+        actorManager = ActorManager.getInstance();
+        actorManager.addEnemy(this);
 
         // SHADER TEST
         vertexShader = Gdx.files.internal("shader/vertex.glsl");
@@ -44,13 +44,12 @@ public class BaseBoss extends GameObject {
 
     @Override
     public void draw(Batch batch, float alpha){
-        stateTime += Gdx.graphics.getDeltaTime();
-        currentFrame = actAnimation.getKeyFrame(stateTime, true);
         batch.draw(currentFrame,this.getX(),getY());
-        update();
     }
 
     public void update() {
+        stateTime += Gdx.graphics.getDeltaTime();
+        currentFrame = actAnimation.getKeyFrame(stateTime, true);
         updateBounds();
     }
 

@@ -27,6 +27,8 @@ public class Fist extends BaseBoss {
 
         spriteAnimation = SpriteAnimation.create("boss/fist.png", 1, 3, animationSpeed);
         actAnimation = spriteAnimation;
+        currentFrame = actAnimation.getKeyFrame(stateTime, true);
+
         setSize(120, 64);
         setPosition(500, 0);
         setBounds();
